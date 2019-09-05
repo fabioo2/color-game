@@ -83,7 +83,7 @@ function generateColors() {
 function colorGuess () {
 	var clickedColor = this.style.backgroundColor
 	if (clickedColor === pickedColor) {
-		messageDisplay.textContent = "Correct!!";
+		messageDisplay.textContent = "Correct!";
 		changeColors(clickedColor);
 		winBackground.style.background = clickedColor;
 		resetButton.textContent = "Play Again?";
