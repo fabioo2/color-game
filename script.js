@@ -1,97 +1,83 @@
 var numSquares = 6;
-var colors = generateRandomColors(numSquares);
+var colors = [];
+var pickedColor;
 var squares = document.querySelectorAll(".square");
-var pickedColor = pickColor();
 var colorDisplay = document.getElementById("colorDisplay");
 var messageDisplay = document.querySelector("#message");
 var winBackground = document.querySelector("h1");
 var resetButton = document.querySelector("#reset")
-var easyBtn = document.querySelector("#easyBtn")
-var hardBtn = document.querySelector("#hardBtn")
+var modeButtons = document.querySelectorAll(".mode")
 
-easyBtn.addEventListener("click", function(){
-	easyBtn.classList.add("selected");
-	hardBtn.classList.remove("selected");
-	winBackground.style.backgroundColor = "steelblue";
-	numSquares = 3;
-	colors = generateRandomColors(numSquares);
-	pickedColor = pickColor();
-	colorDisplay.textContent = pickedColor; 
-	for (var i =0; i < squares.length; i++) {
-		if(colors[i]) {
-			squares[i].style.background = colors[i];
-		} else {
-			squares[i].style.display = "none";
-		}
-	}
-});
+init(); 
 
-hardBtn.addEventListener("click", function(){
-	hardBtn.classList.add("selected");
-	easyBtn.classList.remove("selected");
-	winBackground.style.backgroundColor = "steelblue";
-	numSquares = 6;
-	colors = generateRandomColors(numSquares);
-	pickedColor = pickColor();
-	colorDisplay.textContent = pickedColor; 
-	for (var i =0; i < squares.length; i++) {
-		squares[i].style.background = colors[i];
-		squares[i].style.display = "block";
-		
-	}
-});
+function init () {
+	setupModeButtons();
+	setupSquares();
+	reset();
+};
 
-//generate squares 
-generateColors();
-
-//reset game
-resetButton.addEventListener("click", reset);
-
-//change display h1 to picked color
-colorDisplay.textContent = pickedColor;
+function setupModeButtons() {
+	//mode buttons event listeners
+	for(i=0; i < modeButtons.length; i++) {
+		modeButtons[i].addEventListener("click", function(){
+			modeButtons[0].classList.remove("selected");
+			modeButtons[1].classList.remove("selected");
+			this.classList.add("selected");
+			this.textContent === "Easy" ? numSquares = 3: numSquares = 6;
+			reset();
+		});
+	};
+};
 
 //reset function
 function reset() {
-	//change button text back to "New Color"
-	resetButton.textContent = "New Colours"
 	//generate all new colors
 	colors = generateRandomColors(numSquares);
 	//pick a new random color from array
 	pickedColor = pickColor();
 	//change colorDisplay to show the new color
 	colorDisplay.textContent = pickedColor;
-	//change colors of squares
-	generateColors();
-	//change background of h1 back to black
-	winBackground.style.backgroundColor = "steelblue"
+	//change button text back to "New Color"
+	resetButton.textContent = "New Colours"
 	//clear message display
 	messageDisplay.textContent = "";
-
-
-}
-
-
-//creates 6 clickable squares
-function generateColors() {
+	//change colors of squares
 	for (i=0; i < squares.length; i++) {
-		squares[i].style.backgroundColor = colors[i];
-		squares[i].addEventListener("click", colorGuess);
+		if (colors[i]) {
+			squares[i].style.display = "block";
+			squares[i].style.backgroundColor = colors[i];
+		} else {
+			squares[i].style.display ="none";
+		};
+	}
+	//change background of h1 back to black
+	winBackground.style.backgroundColor = "steelblue"
+}
+
+//reset game
+resetButton.addEventListener("click", reset);
+
+
+
+function setupSquares() {
+	for (i=0; i < squares.length; i++) {
+		// add click Listeners to Squares
+		squares[i].addEventListener("click", function (){
+			// grab color of clicked square
+			var clickedColor = this.style.backgroundColor
+			if (clickedColor === pickedColor) {
+				messageDisplay.textContent = "Correct!";
+				changeColors(clickedColor);
+				winBackground.style.background = clickedColor;
+				resetButton.textContent = "Play Again?";
+			} else {
+				this.style.background = "#232323";
+				messageDisplay.textContent = "Try Again";
+			}
+		});
 	}
 }
 
-//logic to determine if clicked color is the correct color
-function colorGuess () {
-	var clickedColor = this.style.backgroundColor
-	if (clickedColor === pickedColor) {
-		messageDisplay.textContent = "Correct!";
-		changeColors(clickedColor);
-		winBackground.style.background = clickedColor;
-		resetButton.textContent = "Play Again?";
-	} else {
-		this.style.background = "#232323";
-		messageDisplay.textContent = "Try Again";
-	}
-}
 
 //changes all the squares into the picked color on win
 function changeColors (color) {
